@@ -3,8 +3,11 @@ using UnityEngine.AI;
 
 public class NPCWalker : MonoBehaviour
 {
+    [Header("Навигация")]
     public Transform[] waypoints;
     public float waitTime = 2f;
+
+    [Header("Анимация")]
     public Animator animator;
 
     private NavMeshAgent agent;
@@ -18,27 +21,22 @@ public class NPCWalker : MonoBehaviour
 
         if (animator == null)
         {
-            Debug.LogWarning("Animator не назначен в инспекторе на " + gameObject.name);
+            Debug.LogWarning("Animator не назначен в инспекторе!");
         }
 
-        // Устанавливаем idle в начале игры
-        SetWalking(false);
+        SetWalking(true);
 
         if (waypoints.Length > 0)
             GoToRandomWaypoint();
+
+        // Отключаем рэгдолл части на старте
+        EnableRagdoll(false);
     }
 
     void Update()
     {
-        if (isDead || waypoints.Length == 0)
-            return;
+        if (isDead || waypoints.Length == 0) return;
 
-        // Проверяем движение на основе скорости агента и состояния ожидания
-        bool isMoving = !isWaiting && agent.velocity.magnitude > 0.1f;
-        SetWalking(isMoving);
-        Debug.Log($"Velocity Magnitude: {agent.velocity.magnitude}, IsWaiting: {isWaiting}, IsMoving: {isMoving}, IsWalking: {animator.GetBool("isWalking")}");
-
-        // Логика остановки и ожидания
         if (!agent.pathPending && agent.remainingDistance < 0.5f)
         {
             if (!isWaiting)
@@ -46,7 +44,7 @@ public class NPCWalker : MonoBehaviour
                 isWaiting = true;
                 waitTimer = waitTime;
                 agent.isStopped = true;
-                SetWalking(false); // Явно устанавливаем idle при остановке
+                SetWalking(false);
             }
             else
             {
@@ -54,8 +52,9 @@ public class NPCWalker : MonoBehaviour
                 if (waitTimer <= 0f)
                 {
                     GoToRandomWaypoint();
-                    isWaiting = false;
                     agent.isStopped = false;
+                    isWaiting = false;
+                    SetWalking(true);
                 }
             }
         }
@@ -63,38 +62,21 @@ public class NPCWalker : MonoBehaviour
 
     void GoToRandomWaypoint()
     {
-        if (waypoints.Length == 0) return;
-
         int index = Random.Range(0, waypoints.Length);
-        // Избегаем выбора текущей позиции, если возможно
-        if (waypoints.Length > 1)
-        {
-            Vector3 currentPosition = agent.transform.position;
-            int attempts = 0;
-            const int maxAttempts = 10;
-            while (attempts < maxAttempts && Vector3.Distance(currentPosition, waypoints[index].position) < 0.5f)
-            {
-                index = Random.Range(0, waypoints.Length);
-                attempts++;
-            }
-        }
         agent.SetDestination(waypoints[index].position);
-        Debug.Log($"New destination set to: {waypoints[index].name}");
     }
 
     void SetWalking(bool walking)
     {
         if (animator != null)
-        {
             animator.SetBool("isWalking", walking);
-        }
     }
 
     void OnCollisionEnter(Collision collision)
     {
         if (isDead) return;
 
-        if (collision.gameObject.CompareTag("Player"))
+        if (collision.gameObject.CompareTag("PlayerCar"))
         {
             Die();
         }
@@ -102,14 +84,49 @@ public class NPCWalker : MonoBehaviour
 
     void Die()
     {
+        if (isDead) return;
         isDead = true;
-        agent.enabled = false;
-        SetWalking(false);
 
-        Rigidbody rb = GetComponent<Rigidbody>();
-        rb.isKinematic = false;
-        rb.AddForce(Vector3.up * 4f + Random.onUnitSphere * 3f, ForceMode.Impulse);
+        // Отключаем контроллеры
+        if (agent != null)
+            agent.enabled = false;
 
-        Destroy(gameObject, 5f);
+        if (animator != null)
+            animator.enabled = false;
+
+        // Выключаем основной Rigidbody
+        Rigidbody mainRb = GetComponent<Rigidbody>();
+        if (mainRb != null)
+            mainRb.isKinematic = true;
+
+        // Включаем рэгдолл
+        EnableRagdoll(true);
+
+        // Удалим через 10 сек
+        Destroy(gameObject, 10f);
+    }
+
+    void EnableRagdoll(bool enable)
+    {
+        Rigidbody[] rigidbodies = GetComponentsInChildren<Rigidbody>();
+        Collider[] colliders = GetComponentsInChildren<Collider>();
+
+        foreach (var rb in rigidbodies)
+        {
+            if (rb.gameObject == gameObject) continue; // пропускаем root
+            rb.isKinematic = !enable;
+        }
+
+
+        foreach (var col in colliders)
+        {
+            if (col.gameObject == gameObject) continue; // пропускаем root
+            col.enabled = enable;
+        }
+
+        // Отключаем основной коллайдер
+        Collider mainCol = GetComponent<Collider>();
+        if (mainCol != null)
+            mainCol.enabled = !enable;
     }
 }

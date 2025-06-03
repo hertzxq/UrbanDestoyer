@@ -1509,8 +1509,62 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8552964250810909363, guid: e12be2e65ab8ef4459e855cb06380cda, type: 3}
       insertIndex: -1
       addedObject: {fileID: 3768804056105197051}
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8700575514956424988, guid: e12be2e65ab8ef4459e855cb06380cda, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4395765595609153530}
   m_SourcePrefab: {fileID: 100100000, guid: e12be2e65ab8ef4459e855cb06380cda, type: 3}
+--- !u!1 &8427112876289126857 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8700575514956424988, guid: e12be2e65ab8ef4459e855cb06380cda, type: 3}
+  m_PrefabInstance: {fileID: 886569032300697301}
+  m_PrefabAsset: {fileID: 0}
+--- !u!144 &4395765595609153530
+CharacterJoint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8427112876289126857}
+  m_ConnectedBody: {fileID: 0}
+  m_ConnectedArticulationBody: {fileID: 0}
+  m_Anchor: {x: 0, y: 0, z: 0}
+  m_Axis: {x: 1, y: 0, z: 0}
+  m_AutoConfigureConnectedAnchor: 1
+  m_ConnectedAnchor: {x: 0, y: 0, z: 0}
+  serializedVersion: 2
+  m_SwingAxis: {x: 0, y: 1, z: 0}
+  m_TwistLimitSpring:
+    spring: 0
+    damper: 0
+  m_LowTwistLimit:
+    limit: -20
+    bounciness: 0
+    contactDistance: 0
+  m_HighTwistLimit:
+    limit: 70
+    bounciness: 0
+    contactDistance: 0
+  m_SwingLimitSpring:
+    spring: 0
+    damper: 0
+  m_Swing1Limit:
+    limit: 40
+    bounciness: 0
+    contactDistance: 0
+  m_Swing2Limit:
+    limit: 40
+    bounciness: 0
+    contactDistance: 0
+  m_EnableProjection: 0
+  m_ProjectionDistance: 0.1
+  m_ProjectionAngle: 180
+  m_BreakForce: Infinity
+  m_BreakTorque: Infinity
+  m_EnableCollision: 0
+  m_EnablePreprocessing: 1
+  m_MassScale: 1
+  m_ConnectedMassScale: 1
 --- !u!4 &8862946068377506918 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8552964250810909363, guid: e12be2e65ab8ef4459e855cb06380cda, type: 3}
