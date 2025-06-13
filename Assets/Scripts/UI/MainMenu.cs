@@ -12,7 +12,7 @@ public class MainMenu : MonoBehaviour
 
     public void StartGame()
     {
-        SceneManager.LoadScene("Scene1");
+        SceneManager.LoadScene("DefaultCarScene1");
     }
 
     public void QuitGame()
